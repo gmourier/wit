@@ -1,8 +1,8 @@
 addEventListener("fetch", (event) => {
     event.respondWith(
-      handleRequest(event.request).catch(
+        handleRequest(event.request).catch(
         (err) => new Response(err.stack, { status: 500 })
-      )
+        )
     );
 });
 
@@ -32,9 +32,10 @@ async function handleRequest(request) {
     if (result === null) {
         // Fetch the first tweet
         const firstTweet = await getTweet(tweetId, twitterAPIHeaders);
-
+        console.log(firstTweet);
         // Fetch sub tweets with a search query (author's answers to himself for a conversation_id)
         const followingTweets = await getFollowingTweets(firstTweet.data[0].author_id, tweetId, twitterAPIHeaders);
+        console.log(followingTweets);
 
         // API response creation
         const followingTweetsData = (followingTweets.data && followingTweets.data.length) ? followingTweets.data : [];
@@ -75,7 +76,7 @@ async function handleRequest(request) {
 
 function getTweet(tweetId, headers) {
     return new Promise((resolve, reject) => {
-        const url = "https://api.twitter.com/2/tweets?ids=" + tweetId + "&tweet.fields=author_id&user.fields=name,username,profile_image_url,url&expansions=author_id";
+        const url = "https://api.twitter.com/2/tweets?ids=" + tweetId + "&tweet.fields=attachments,conversation_id&media.fields=url&user.fields=name,username,profile_image_url,url&expansions=attachments.media_keys,author_id";
         fetch(url, headers)
         .then((tweet) => tweet.json())
         .then((resp) => resolve(resp))
