@@ -1,38 +1,69 @@
-.App {
+@import url('https://fonts.googleapis.com/css2?family=Lora&family=Yeseva+One&display=swap');
+
+html {
+  background: #0a0a0a;
+  color: #fff;
+}
+
+.main {
+  max-width: 800px;
+  margin: auto;
+  font-family: 'Lora', serif;
+}
+
+.logo {
+  font-family: 'Yeseva One', serif;
+  font-size:60px;
+  text-align:center;
+  margin-top:1em;
+}
+
+.hero {
+  font-style: italic;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.limited-viewing-banner {
+  margin:8em;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+p {
+  word-break: break-word;
+  margin-top: 2em;
+  letter-spacing: -0.003em;
+  line-height: 80px;
+  font-size: 64px;
+  font-weight: 400;
+  white-space: pre-wrap;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.authorBanner {
+  margin-top:8em;
+  font-size:20px;
+  text-align:center;
+
 }
 
-.App-link {
-  color: #61dafb;
+a {
+  color: #00fddc;
+  text-decoration: underline;
+  text-underline-offset: 10px;
+  text-decoration-style: solid;
+  text-decoration-thickness: 8px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.thread_img {
+  margin-top: 2em;
+  max-width:100%;
+  height:auto;
+  display: block;
+}
+
+.reading-progress-bar {
+  position: fixed;
+  height: 10px;
+  bottom: 0;
+  left:0;
+  max-width: 100%;
+  background-color: #fff;
 }
