@@ -6,7 +6,7 @@ html {
 }
 
 .main {
-  max-width: 800px;
+  max-width: 960px;
   margin: auto;
   font-family: 'Lora', serif;
 }
@@ -36,6 +36,9 @@ p {
   font-weight: 400;
   white-space: pre-wrap;
 }
+p::selection {
+  background: #fb5607;
+}
 
 .authorBanner {
   margin-top:8em;
@@ -45,7 +48,7 @@ p {
 }
 
 a {
-  color: #00fddc;
+  color: #fb5607;
   text-decoration: underline;
   text-underline-offset: 10px;
   text-decoration-style: solid;
@@ -65,5 +68,11 @@ a {
   bottom: 0;
   left:0;
   max-width: 100%;
-  background-color: #fff;
+  background-color: #fb5607;
+}
+
+h2 {
+  line-height: 100px;
+  margin-top:2em;
+  margin-bottom: 0em;
 }

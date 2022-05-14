@@ -22,6 +22,28 @@ class ThreadDisplay extends React.Component {
         });
     }
 
+    formatText(text) {
+        let decodedText = decode(text);
+
+        if (!isNaN(decodedText.charAt(0))){
+            //first char is a number; Extract sentence and make it shine as a title.
+            const after  = decodedText.slice(decodedText.indexOf('\n') + 1);
+            const before = decodedText.slice(0, decodedText.indexOf('\n'));
+
+            return (
+                <>
+                    <h2>{before}</h2>
+                    {after}
+                </>
+            );
+        }
+
+
+        return (
+           decodedText
+        );
+    }
+
     componentDidMount() {
         if (this.props.tweetId) {
             this.setState({loading: true})
@@ -45,7 +67,7 @@ class ThreadDisplay extends React.Component {
             author = this.state.data.author;
             thread_parts = this.state.data.tweets.map(tweet =>
                 <p key={tweet.id}>
-                    {decode(tweet.text)}
+                    {this.formatText(tweet.text)}
                     {tweet.media &&
                         <img className="thread_img" src={tweet.media.url} />
                     }
@@ -67,9 +89,9 @@ class ThreadDisplay extends React.Component {
                     </div>
                 }
 
-                {author &&
+                {/* {author &&
                     <LimitedViewingBanner authorName={author.name}/>
-                }
+                } */}
 
                 <div className="thread" ref={target}>
                     {thread_parts ? thread_parts : null}
