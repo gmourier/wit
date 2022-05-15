@@ -1,7 +1,7 @@
 addEventListener("fetch", (event) => {
     event.respondWith(
         handleRequest(event.request).catch(
-        (err) => new Response(err.stack, { status: 500 })
+            (err) => new Response(err.stack, { status: 500 })
         )
     );
 });
@@ -32,41 +32,11 @@ async function handleRequest(request) {
     if (result === null) {
         // Fetch the first tweet
         const firstTweet = await getTweet(tweetId, twitterAPIHeaders);
-        console.log(firstTweet);
+
         // Fetch sub tweets with a search query (author's answers to himself for a conversation_id)
         const followingTweets = await getFollowingTweets(firstTweet.data[0].author_id, tweetId, twitterAPIHeaders);
-        console.log(followingTweets);
 
-        // API response creation
-        const followingTweetsData = (followingTweets.data && followingTweets.data.length) ? followingTweets.data : [];
-        const followingTweetsMedias = (followingTweets.includes && followingTweets.includes.media && followingTweets.includes.media.length) ? followingTweets.includes.media : [];
-
-        // Inject extracted medias to their related tweet object
-        followingTweetsMedias.forEach(media => {
-            let found = followingTweetsData.findIndex(function(tweet, index) {
-                if(tweet.attachments && tweet.attachments.media_keys == media.media_key) {
-                    return true;
-                }
-            });
-
-            if (found) {
-                followingTweetsData[found].media = media;
-                delete followingTweetsData[found].attachments;
-            }
-        });
-
-        const tweets = [{
-            'id': firstTweet.data[0].id,
-            'text': firstTweet.data[0].text,
-            'media': (firstTweet.includes && firstTweet.includes.media && firstTweet.includes.media.length) ? firstTweet.includes.media[0] : null
-        }, ...followingTweetsData.reverse()]; // Following tweets are reversed to be displayed in their order of creation
-
-        let result = {
-            'author': firstTweet.includes.users[0],
-            'tweets': tweets
-        };
-
-        result = JSON.stringify(result);
+        const result = JSON.stringify(formatData(firstTweet, followingTweets));
 
         await WIT_THREADS.put(tweetId, result);
     }
@@ -74,13 +44,84 @@ async function handleRequest(request) {
     return new Response(result, responseHeaders);
 }
 
+function formatData(firstTweet, followingTweets) {
+
+    let toFormat = {
+    data: [],
+    includes: {
+        media: [],
+        users: []
+    }
+    };
+
+    //extract and create a structure to iterate on
+    if (followingTweets) {
+        if (followingTweets.data) {
+            toFormat.data = followingTweets.data;
+        }
+
+        if (followingTweets.includes) {
+            toFormat.includes = followingTweets.includes;
+        }
+    }
+
+    if (firstTweet) {
+        if (firstTweet.data) {
+            toFormat.data.push(firstTweet.data[0]);
+        }
+
+        if (firstTweet.includes) {
+            toFormat.includes.users = firstTweet.includes.users;
+
+            if (firstTweet.includes.media) {
+            firstTweet.includes.media.forEach(media => {
+                toFormat.includes.media.push(media);
+            })
+            }
+        }
+    }
+
+    let author = (toFormat.includes.users.length) ? toFormat.includes.users[0] : null;
+    let tweets = [];
+
+    // Iterate over each tweets and merge medias
+    toFormat.data.forEach(tweet => {
+        let t = {
+            "id": tweet.id,
+            "text": tweet.text,
+            "medias": []
+        }
+
+        if (tweet.attachments && tweet.attachments.media_keys) {
+            tweet.attachments.media_keys.forEach(id => {
+                let found = toFormat.includes.media.findIndex(function(media, index) {
+                    if(id == media.media_key) {
+                        return true;
+                    }
+                });
+
+                if (found != -1) {
+                    t.medias.push(toFormat.includes.media[found])
+                }
+            })
+        }
+
+        tweets.push(t);
+    })
+
+    return {
+        author: author,
+        tweets: tweets.reverse()
+    }
+}
+
 function getTweet(tweetId, headers) {
     return new Promise((resolve, reject) => {
         const url = "https://api.twitter.com/2/tweets?ids=" + tweetId + "&tweet.fields=attachments,conversation_id&media.fields=url&user.fields=name,username,profile_image_url,url&expansions=attachments.media_keys,author_id";
         fetch(url, headers)
-        .then((tweet) => tweet.json())
-        .then((resp) => resolve(resp))
-        .catch((err) => reject(err));
+            .then((tweet) => tweet.json())
+            .then((resp) => resolve(resp))
+            .catch((err) => reject(err));
     });
 }
 
@@ -88,8 +129,8 @@ function getFollowingTweets(authorId, conversationId, headers) {
     return new Promise((resolve, reject) => {
         const url = "https://api.twitter.com/2/tweets/search/recent?query=(from:" + authorId + " to:" + authorId + " conversation_id:" + conversationId + ")&max_results=100&&expansions=attachments.media_keys&user.fields=username,profile_image_url,description&media.fields=preview_image_url,url";
         fetch(url, headers)
-        .then((followingTweets) => followingTweets.json())
-        .then((resp) => resolve(resp))
-        .catch((err) => reject(err));
+            .then((followingTweets) => followingTweets.json())
+            .then((resp) => resolve(resp))
+            .catch((err) => reject(err));
     });
 }

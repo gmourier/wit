@@ -23,6 +23,18 @@ class ThreadDisplay extends React.Component {
         });
     }
 
+    componentDidMount() {
+        if (this.props.tweetId) {
+            this.setState({loading: true})
+            this.getThread(this.props.tweetId).then((data) => {
+                this.setState({
+                    loading: false,
+                    data: data
+                })
+            });
+        }
+    }
+
     formatText(text) {
         let decodedText = decode(text);
 
@@ -39,42 +51,31 @@ class ThreadDisplay extends React.Component {
             );
         }
 
-
-        return (
-           decodedText
-        );
+        return decodedText;
     }
-
-    componentDidMount() {
-        if (this.props.tweetId) {
-            this.setState({loading: true})
-            this.getThread(this.props.tweetId).then((data) => {
-                this.setState({
-                    loading: false,
-                    data: data
-                })
-            });
-        }
-    }
-
 
     render () {
-        let text = this.state.loading ? "loading..." : ""
+        let loader = this.state.loading ? "loading..." : ""
 
-        let thread_parts = null;
+        let thread = null;
         let author = null;
+
         let raw = null;
         let reading_time = null;
 
         if (this.state.loading == false && this.state.data) {
             author = this.state.data.author;
-            thread_parts = this.state.data.tweets.map(tweet => {
-                raw = raw + tweet.text
+
+            thread = this.state.data.tweets.map(tweet => {
+                raw = raw + tweet.text; //used to keep track of whole text -> readingTime calculation //TODO: Organize code
+
                 return (
                     <p key={tweet.id}>
                         {this.formatText(tweet.text)}
-                        {tweet.media &&
-                            <img className="thread_img" src={tweet.media.url} />
+                        {tweet.medias &&
+                            tweet.medias.map(media =>{
+                                return <img key={media.media_key} className="thread_img" src={media.url} />
+                            })
                         }
                     </p>
                 )
@@ -88,7 +89,7 @@ class ThreadDisplay extends React.Component {
         return(
             <>
                 <div>
-                    {text}
+                    {loader}
                 </div>
 
                 {author &&
@@ -103,12 +104,8 @@ class ThreadDisplay extends React.Component {
                     </div>
                 }
 
-                {/* {author &&
-                    <LimitedViewingBanner authorName={author.name}/>
-                } */}
-
                 <div className="thread" ref={target}>
-                    {thread_parts ? thread_parts : null}
+                    {thread ? thread : null}
                 </div>
 
                 <ReadingProgressBar target={target} />
