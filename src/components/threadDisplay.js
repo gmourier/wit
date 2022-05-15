@@ -85,7 +85,7 @@ class ThreadDisplay extends React.Component {
 
                 {author &&
                     <div className="authorBanner">
-                        A story written by <a href={author.url} target="_blank">{author.name}</a>
+                        Written by <a href={author.url} target="_blank">{author.name}</a>
                     </div>
                 }
 

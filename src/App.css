@@ -77,8 +77,13 @@ h2 {
   margin-bottom: 0em;
 }
 
-.onboard-tips {
+.onboarder {
   margin-top:8em;
-  text-align:center;
   font-size:20px;
+}
+
+.onboarder h2 {
+  line-height: auto;
+  font-family: 'Lora', serif;
+  font-size:70px;
 }
