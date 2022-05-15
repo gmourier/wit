@@ -40,19 +40,20 @@ p::selection {
   background: #fb5607;
 }
 
-.authorBanner {
+.storyHeader {
   margin-top:8em;
   font-size:20px;
   text-align:center;
+}
 
+.storyHeader .readingTime {
+  font-size: 16px;
+  margin-top: 1em;
 }
 
 a {
   color: #fb5607;
-  text-decoration: underline;
-  text-underline-offset: 10px;
-  text-decoration-style: solid;
-  text-decoration-thickness: 8px;
+  text-decoration: none;
 }
 
 .thread_img {

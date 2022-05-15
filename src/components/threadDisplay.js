@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReadingProgressBar from './readingProgressBar';
 import LimitedViewingBanner from './limitedViewingBanner';
-
 import {decode} from 'html-entities';
+
+const readingTime = require('reading-time/lib/reading-time');
 
 class ThreadDisplay extends React.Component {
     constructor(props) {
@@ -62,17 +63,24 @@ class ThreadDisplay extends React.Component {
 
         let thread_parts = null;
         let author = null;
+        let raw = null;
+        let reading_time = null;
 
         if (this.state.loading == false && this.state.data) {
             author = this.state.data.author;
-            thread_parts = this.state.data.tweets.map(tweet =>
-                <p key={tweet.id}>
-                    {this.formatText(tweet.text)}
-                    {tweet.media &&
-                        <img className="thread_img" src={tweet.media.url} />
-                    }
-                </p>
-            )
+            thread_parts = this.state.data.tweets.map(tweet => {
+                raw = raw + tweet.text
+                return (
+                    <p key={tweet.id}>
+                        {this.formatText(tweet.text)}
+                        {tweet.media &&
+                            <img className="thread_img" src={tweet.media.url} />
+                        }
+                    </p>
+                )
+            })
+
+            reading_time = readingTime(raw);
         }
 
         const target = React.createRef();
@@ -84,8 +92,14 @@ class ThreadDisplay extends React.Component {
                 </div>
 
                 {author &&
-                    <div className="authorBanner">
-                        Written by <a href={author.url} target="_blank">{author.name}</a>
+                    <div className="storyHeader">
+                        <div className="author">
+                            Written by <a href={author.url} target="_blank">{author.name}</a>
+                        </div>
+
+                        <div className="readingTime">
+                            {reading_time.text}
+                        </div>
                     </div>
                 }
 
