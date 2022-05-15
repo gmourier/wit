@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 
 import ThreadOperator from './components/threadOperator';
+import Onboarder from './components/onboarder';
 
 function useQuery() {
   const { search } = useLocation();
@@ -21,8 +22,10 @@ function Parent() {
 
   return(
     <div className='main'>
-      <div className="logo">wit</div>
-      <div className="hero">Turn any Twitter thread into an insightful reading.</div>
+      <div className="header">
+        <div className="logo">wit</div>
+        <div className="hero">Turn any Twitter thread into an insightful reading.</div>
+      </div>
 
       <Child tweetId={query.get("tweetId")} />
     </div>
@@ -35,7 +38,7 @@ function Child({ tweetId }) {
       {tweetId ? (
         <ThreadOperator tweetId={tweetId} />
       ) : (
-        <h3>There is no tweetId</h3>
+        <Onboarder />
       )}
     </div>
   );
