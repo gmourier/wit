@@ -3,52 +3,30 @@ import './App.css';
 import React from "react";
 
 import {
-  BrowserRouter as Router,
-  useLocation
+  Outlet,
+  BrowserRouter,
+  Routes,
+  Route
 } from "react-router-dom";
 
-import ThreadOperator from './components/threadOperator';
-import Onboarder from './components/onboarder';
+import Home from './routes/home';
+import Thread from './routes/thread';
 
-function useQuery() {
-  const { search } = useLocation();
+import Header from './components/header';
 
-  return React.useMemo(() => new URLSearchParams(search), [search]);
-}
-
-
-function Parent() {
-  let query = useQuery();
-
-  return(
-    <div className='main'>
-      <div className="header">
-        <div className="logo">wit</div>
-        <div className="hero">Turn any Twitter thread into an insightful reading.</div>
-      </div>
-
-      <Child tweetId={query.get("tweetId")} />
-    </div>
-  );
-}
-
-function Child({ tweetId }) {
-  return (
-    <div>
-      {tweetId ? (
-        <ThreadOperator tweetId={tweetId} />
-      ) : (
-        <Onboarder />
-      )}
-    </div>
-  );
-}
 
 function App() {
   return (
-    <Router>
-      <Parent />
-    </Router>
+    <div className='main'>
+        <Header />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="thread/:id" element={<Thread />} />
+          </Routes>
+        </BrowserRouter>
+        <Outlet />
+    </div>
   );
 }
 

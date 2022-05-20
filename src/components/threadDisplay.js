@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReadingProgressBar from './readingProgressBar';
-import LimitedViewingBanner from './limitedViewingBanner';
 import {decode} from 'html-entities';
 
 const readingTime = require('reading-time/lib/reading-time');
@@ -14,6 +13,7 @@ class ThreadDisplay extends React.Component {
         }
     }
 
+    //fetch data
     getThread(tweetId) {
         return new Promise((resolve, reject) => {
           fetch("https://req.wit-app.workers.dev/?tweetId=" + tweetId)

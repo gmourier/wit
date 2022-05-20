@@ -1,6 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-const Onboarder = () => {
+const Home = () => {
     return (
         <div className="onboarder">
             <h2>The inspiring stories are already around.</h2>
@@ -20,10 +21,10 @@ const Onboarder = () => {
 
             <h2>Shall we continue?</h2>
             <p>
-                <a href="?tweetId=1524807290888499200">Let's read a story.</a>
+                <Link to="/thread/1524807290888499200">Let's read a story.</Link>
             </p>
         </div>
     )
 };
 
-export default Onboarder;
+export default Home;
